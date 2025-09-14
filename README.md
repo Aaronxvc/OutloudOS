@@ -62,14 +62,17 @@ npm start
 # → http://localhost:3000
 
 ## Start the Receiver - 
+```bash
  cd ../hardware/src/OutloudOS.Receiver
 dotnet run --urls "http://localhost:5064"
+```
 # → SignalR hub at http://localhost:5064/hubs/stream
 
 ## Test the stream - 
+```bash
 curl -X POST "http://localhost:5064/proto/tok" -d "chunk=Hello from curl"
 curl -X POST "http://localhost:5064/proto/tok_end" -d "reason=Done"
-
+```
 Open http://localhost:3000
  and you’ll see the text live in your UI.
 ---
