@@ -1,0 +1,51 @@
+#include <Arduino.h>
+#include <Wire.h>
+
+#ifndef OLED_SDA
+#define OLED_SDA 8
+#endif
+#ifndef OLED_SCL
+#define OLED_SCL 9
+#endif
+
+static void doScan() {
+  uint8_t found = 0;
+  Serial.println("Scanning 0x01..0x7E ...");
+  for (uint8_t addr = 1; addr < 127; addr++) {
+    Wire.beginTransmission(addr);
+    uint8_t err = Wire.endTransmission();
+    if (err == 0) {
+      Serial.printf("  -> Found device at 0x%02X\n", addr);
+      found++;
+    }
+  }
+  if (!found) {
+    Serial.println("No I2C devices found.\nTips: check 3V3, GND, SDA↔SCL, and OLED 0x3C vs 0x3D.\n");
+  } else {
+    Serial.printf("Scan complete, devices found: %u\n\n", found);
+  }
+}
+
+void setup() {
+  // Bring up USB-CDC fast; don't block if Serial isn't ready yet
+  Serial.begin(115200);
+
+  // Start I2C on the pins we passed via build flags
+  pinMode(OLED_SDA, INPUT_PULLUP);
+  pinMode(OLED_SCL, INPUT_PULLUP);
+  Wire.end();
+  delay(30);
+  Wire.begin(OLED_SDA, OLED_SCL, 100000);
+
+  // Print a banner a few times so you catch it even if you open the monitor late
+  for (int i = 0; i < 3; ++i) {
+    Serial.printf("\n=== I2C Scanner (ESP32-S3 DevKitC) === [boot %d]\n", i+1);
+    Serial.printf("Using SDA=%d, SCL=%d at 100kHz\n\n", OLED_SDA, OLED_SCL);
+    delay(100);
+  }
+}
+
+void loop() {
+  doScan();
+  delay(2000);
+}

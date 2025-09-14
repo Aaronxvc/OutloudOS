@@ -1,0 +1,10 @@
+#include <Arduino.h>
+void setup() {
+  Serial.begin(115200);
+  // Print several times so you catch it even if the monitor opens late
+  for (int i=0;i<3;i++){ Serial.println("\nSerial PROBE: ready"); delay(100); }
+}
+void loop() {
+  static uint32_t t=0;
+  if (millis()-t>1000){ t = millis(); Serial.printf("tick %lu ms\n", (unsigned long)t); }
+}

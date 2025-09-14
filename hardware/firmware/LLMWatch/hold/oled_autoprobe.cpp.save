@@ -1,0 +1,106 @@
+#include <Arduino.h>
+#include <Wire.h>
+#include <U8g2lib.h>
+
+// ---- Your S3 wiring ----
+#ifndef OLED_SDA
+#define OLED_SDA 8
+#endif
+#ifndef OLED_SCL
+#define OLED_SCL 9
+#endif
+
+// Draw a very obvious pattern
+static void drawPattern(U8G2 &u8) {
+  u8.clearBuffer();
+  u8.setFont(u8g2_font_6x10_tf);
+  u8.drawStr(0, 10, "HELLO OLED");
+  u8.drawHLine(0, 14, 128);
+  u8.drawBox(0, 20, 60, 20);
+  u8.drawFrame(64, 20, 60, 20);
+  u8.sendBuffer();
+}
+
+enum DriverKind : uint8_t {
+  DRV_SH1106_128x64,
+  DRV_SSD1306_128x64,
+  DRV_SH1107_64x128,
+  DRV_SH1107_128x128
+};
+
+// Try a single (driver, address) pair. Returns true if it drew.
+static bool try_one(DriverKind kind, uint8_t addr7) {
+  // Create the right U8g2 object for this attempt
+  U8G2 *u8 = nullptr;
+  switch (kind) {
+    case DRV_SH1106_128x64:
+      u8 = new U8G2_SH1106_128X64_NONAME_F_HW_I2C(U8G2_R0, U8X8_PIN_NONE);
+      break;
+    case DRV_SSD1306_128x64:
+      u8 = new U8G2_SSD1306_128X64_NONAME_F_HW_I2C(U8G2_R0, U8X8_PIN_NONE);
+      break;
+    case DRV_SH1107_64x128:
+      u8 = new U8G2_SH1107_64X128_F_HW_I2C(U8G2_R0, U8X8_PIN_NONE);
+      break;
+    case DRV_SH1107_128x128:
+      u8 = new U8G2_SH1107_128X128_F_HW_I2C(U8G2_R0, U8X8_PIN_NONE);
+      break;
+  }
+  if (!u8) return false;
+
+  // Force I2C address (U8g2 expects 8-bit address internally)
+  u8->setI2CAddress(addr7 << 1);
+
+  // Try to init
+  bool ok = u8->begin();
+  Serial.print("Trying ");
+  switch (kind) {
+    case DRV_SH1106_128x64:  Serial.print("SH1106 128x64"); break;
+    case DRV_SSD1306_128x64: Serial.print("SSD1306 128x64"); break;
+    case DRV_SH1107_64x128:  Serial.print("SH1107 64x128"); break;
+    case DRV_SH1107_128x128: Serial.print("SH1107 128x128"); break;
+  }
+  Serial.printf(" @0x%02X ... %s\n", addr7, ok ? "OK" : "fail");
+
+  if (ok) {
+    drawPattern(*u8);
+    // Leave pattern on-screen and keep pointer so it doesn’t destruct
+    while (true) { delay(1000); }
+  }
+
+  delete u8;
+  return false;
+}
+
+void setup() {
+  Serial.begin(115200);
+  Wire.begin(OLED_SDA, OLED_SCL, 100000);
+  delay(100);
+
+  Serial.println("\n=== OLED AUTO-PROBE (U8g2, plain C++) ===");
+  Serial.println("Trying common controllers on 0x3C and 0x3D...");
+
+  // Order: the most likely ones first
+  const uint8_t addrs[2] = {0x3C, 0x3D};
+  const DriverKind kinds[] = {
+    DRV_SH1106_128x64,
+    DRV_SSD1306_128x64,
+    DRV_SH1107_64x128,
+    DRV_SH1107_128x128
+  };
+
+  for (uint8_t k = 0; k < sizeof(kinds)/sizeof(kinds[0]); ++k) {
+    for (uint8_t a = 0; a < 2; ++a) {
+      if (try_one(kinds[k], addrs[a])) {
+        // Will never return if OK
+      }
+      delay(200);
+    }
+  }
+
+  Serial.println("All attempts failed. If I2C scan saw 0x3C/0x3D but this draws nothing, re-check:");
+  Serial.println("- Module is I2C (not SPI) and jumpers are set to I2C.");
+  Serial.println("- VCC->3V3, GND->GND; SDA->D8, SCL->D9.");
+}
+
+void loop() {}

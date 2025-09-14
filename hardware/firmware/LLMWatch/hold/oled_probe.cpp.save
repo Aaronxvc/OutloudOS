@@ -1,0 +1,52 @@
+#include <Arduino.h>
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#include <Adafruit_SH110X.h>
+
+#ifndef OLED_SDA
+#define OLED_SDA 8
+#endif
+#ifndef OLED_SCL
+#define OLED_SCL 9
+#endif
+#ifndef OLED_ADDR
+#define OLED_ADDR 0x3C
+#endif
+
+Adafruit_SSD1306 ssd1306(128, 64, &Wire, -1);
+Adafruit_SH1106G sh1106(128, 64, &Wire, -1);
+
+void setup() {
+  Serial.begin(115200);
+  for (int i=0;i<2;i++){ Serial.println("\nOLED PROBE starting..."); delay(50); }
+
+  Wire.begin(OLED_SDA, OLED_SCL, 100000);
+  delay(100);
+
+  if (ssd1306.begin(SSD1306_SWITCHCAPVCC, OLED_ADDR)) {
+    Serial.println("SSD1306: OK");
+    ssd1306.clearDisplay();
+    ssd1306.setTextColor(SSD1306_WHITE);
+    ssd1306.setTextSize(1);
+    ssd1306.setCursor(0,0);
+    ssd1306.println("SSD1306 OK");
+    ssd1306.display();
+    return;
+  }
+  Serial.println("SSD1306: FAIL, trying SH1106...");
+
+  if (sh1106.begin(OLED_ADDR, true)) { // true = do reset
+    Serial.println("SH1106: OK");
+    sh1106.clearDisplay();
+    sh1106.setTextColor(SH110X_WHITE);
+    sh1106.setTextSize(1);
+    sh1106.setCursor(0,0);
+    sh1106.println("SH1106 OK");
+    sh1106.display();
+    return;
+  }
+  Serial.println("SH1106: FAIL — check wiring/address");
+}
+
+void loop() {}

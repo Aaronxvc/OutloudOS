@@ -1,0 +1,7 @@
+{
+  "ignore": [
+    "server/data/*",
+    "server/data/**"
+  ]
+}
+

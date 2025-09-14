@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Outloud OS</title>
+  <link rel="stylesheet" href="style.css">
+  <link
+    href="https://fonts.googleapis.com/css?family=Fira+Code|JetBrains+Mono|IBM+Plex+Mono|Roboto+Mono&display=swap"
+    rel="stylesheet"
+  >
+</head>
+
+<!-- Floating receiver log (dev only) -->
+<div id="rxTap">
+  <div class="rxHead">
+    <span class="dot" id="rxDot"></span>
+    <strong id="rxText">Receiver: offline</strong>
+  </div>
+  <div id="rxLog"></div>
+</div>
+
+<body>
+
+
+  <!-- ICON DOCK (populated by setupAllAppIconsInPlane) -->
+  <div id="iconPlane" class="icon-plane vertical"></div>
+
+  <!-- TERMINAL -->
+  <div class="window" id="promptWindow">
+    <div class="title-bar">
+      <span class="window-title">
+        <span class="emoji">🧠</span> Outloud Terminal
+      </span>
+      <div class="window-controls">
+        <button class="min-btn">–</button>
+        <button class="max-btn">□</button>
+        <button class="close-btn">×</button>
+      </div>
+    </div>
+    <div class="window-content">
+      <div class="chat-thread terminal-output"></div>
+      <div class="terminal-input-row">
+        <input class="terminal-input" placeholder="Type a prompt…" />
+        <button class="run-btn">Run</button>
+        <button class="save-thread-btn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILE EXPLORER -->
+  <div class="window" id="fileTreeWindow">
+    <div class="title-bar">
+      <span class="window-title">📂 Explorer</span>
+    </div>
+    <div class="window-content fs-file-tree"></div>
+    <button class="back-btn" style="display:none">← Back</button>
+  </div>
+
+  <!-- TEXT PAD -->
+  <div class="window" id="textPadWindow">
+    <div class="title-bar">
+      <span class="window-title">📄 TextPad</span>
+    </div>
+    <div class="window-content">
+      <textarea class="textpad-editor"></textarea>
+      <div style="margin-top:8px;">
+        <button class="run-textpad-btn">▶️ Run</button>
+        <button class="save-textpad-btn">💾 Save</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- SETTINGS -->
+  <div class="window" id="settingsWindow">
+    <div class="title-bar">
+      <span class="window-title">⚙️ Settings</span>
+    </div>
+    <div class="window-content">
+      <div class="settings-content">
+        <!-- LEFT PANEL -->
+        <div class="panel">
+          <fieldset class="bg-group">
+            <legend>Background</legend>
+            <label><input type="radio" name="bgType" value="matrix"> Matrix</label>
+            <label><input type="radio" name="bgType" value="color"> Solid Color</label>
+            <label><input type="radio" name="bgType" value="image"> Wallpaper</label>
+          </fieldset>
+          <div class="form-group">
+            <label for="bgColor">Pick Color:</label>
+            <input type="color" id="bgColor" name="bgColor">
+          </div>
+          <div class="form-group">
+            <label for="wallpaperUpload">Upload Image:</label>
+            <input type="file" id="wallpaperUpload" accept="image/*">
+          </div>
+        </div>
+        <!-- RIGHT PANEL -->
+        <div class="panel">
+          <div class="form-group">
+            <label for="fontSelect">Font Family:</label>
+            <select id="fontSelect">
+              <option>Fira Code</option>
+              <option>JetBrains Mono</option>
+              <option>IBM Plex Mono</option>
+              <option>Roboto Mono</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="terminalColorPicker">Terminal Text:</label>
+            <input type="color" id="terminalColorPicker">
+          </div>
+          <div class="form-group">
+            <label for="explorerColorPicker">Explorer Text:</label>
+            <input type="color" id="explorerColorPicker">
+          </div>
+          <div class="form-group">
+            <label for="textpadColorPicker">TextPad Text:</label>
+            <input type="color" id="textpadColorPicker">
+          </div>
+          <div class="form-group">
+            <label for="assistantColorPicker">Assistant Text:</label>
+            <input type="color" id="assistantColorPicker">
+          </div>
+          <div class="button-row">
+            <button id="applySettingsBtn">Apply</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MIRROR -->
+  <div class="window mirror-window" id="mirrorWindow">
+    <div class="title-bar">
+      <span class="window-title">
+        <span class="emoji">🪞</span> Mirror
+      </span>
+    </div>
+    <div class="window-content">
+      <textarea id="mirrorTextarea" placeholder="Your thoughts…"></textarea>
+      <div class="mirror-controls">
+        <button id="mirrorSaveBtn">💾 Save</button>
+        <button id="mirrorSendBtn">🧠 Send to Terminal</button>
+      </div>
+      <div id="mirrorStatus">&nbsp;</div>
+    </div>
+  </div>
+
+  <!-- MINIMIZED BAR -->
+  <div id="minimizedBar">
+    <div id="minBarHeader">Minimized Icons ▾</div>
+    <div id="minimizedContainer">No minimized windows 😁</div>
+  </div>
+
+  <!-- TASKBAR -->
+  <div id="taskbar">
+    <span class="logo">⏚ Outloud OS</span>
+    <span id="clock"></span>
+  </div>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+  <script src="script.js"></script>
+
+</body>
+</html>
+

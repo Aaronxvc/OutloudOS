@@ -1,0 +1,15 @@
+# === Core web framework (routes, request/response lifecycle)
+# C# analog: ASP.NET Core (Minimal APIs / MVC)
+fastapi==0.114.2
+
+# === ASGI server to run FastAPI in development
+# C# analog: Kestrel (built-in web server)
+uvicorn[standard]==0.30.6
+
+# === Data validation / typed models used by FastAPI
+# C# analog: model binding + DataAnnotations; records/classes with validation
+pydantic==2.8.2
+
+# === Enables multipart/form-data uploads (audio files for STT)
+# C# analog: IFormFile binding in ASP.NET
+python-multipart==0.0.9

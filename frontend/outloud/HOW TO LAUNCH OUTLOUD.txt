@@ -1,0 +1,14 @@
+HOW TO LAUNCH OUTLOUD IN TERMINAL 
+
+1. - npm run dev
+
+2. Go to browser and navigate to http://localhost:3000/
+
+
+
+
+
+
+
+
+
