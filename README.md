@@ -46,9 +46,46 @@ The long-term vision: a **sovereign, local-first operating system** where
 
 ---
 
-## 🚀 Quick Start
+Quick Start
 
 ### 1. Clone the repo
 ```bash
 git clone https://github.com/YOURUSER/OutloudOS.git
 cd OutloudOS
+```
+---
+## Start the frontend - 
+
+cd frontend
+npm install
+npm start
+# → http://localhost:3000
+
+## Start the Receiver - 
+ cd ../hardware/src/OutloudOS.Receiver
+dotnet run --urls "http://localhost:5064"
+# → SignalR hub at http://localhost:5064/hubs/stream
+
+## Test the stream - 
+curl -X POST "http://localhost:5064/proto/tok" -d "chunk=Hello from curl"
+curl -X POST "http://localhost:5064/proto/tok_end" -d "reason=Done"
+
+Open http://localhost:3000
+ and you’ll see the text live in your UI.
+---
+
+## Vision
+
+OutloudOS isn’t just a project — it’s a philosophy:
+
+Sovereign: local-first, no dependency on cloud APIs.
+
+Composable: a DSL that lets you open apps, run macros, and query data.
+
+Retro-inspired: a nod to hardware like the Flipper Zero, but pointed toward personal AI.
+
+---
+
+## License
+
+MIT — see LICENSE
