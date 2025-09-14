@@ -55,10 +55,11 @@ cd OutloudOS
 ```
 ---
 ## Start the frontend - 
-
+```bash
 cd frontend
 npm install
 npm start
+```
 # → http://localhost:3000
 
 ## Start the Receiver - 
