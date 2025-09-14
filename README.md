@@ -46,7 +46,7 @@ The long-term vision: a **sovereign, local-first operating system** where
 
 ---
 
-Quick Start
+## Quick Start
 
 ### 1. Clone the repo
 ```bash
